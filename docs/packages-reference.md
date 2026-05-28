@@ -154,4 +154,4 @@ Minimum portable `run_turn` event types (conformance): **`output_delta`**, **`ru
 
 ## Operator integration (eXo-brain)
 
-Registration, deployment, and control-plane factory behavior are documented in **`SavinRazvan/eXo-brain`**, not this repo. Consumer handoff pointer: [`exo_adapters_pypi_handoff.md`](../exo_adapters_pypi_handoff.md) (repo root).
+Registration, deployment, and control-plane factory behavior are documented in **`SavinRazvan/eXo-brain`**, not this repo. Pin published wheels using [RELEASE.md](../RELEASE.md) and [versioning-and-releases.md](versioning-and-releases.md).

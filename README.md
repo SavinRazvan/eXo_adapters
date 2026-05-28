@@ -99,7 +99,6 @@ Same gates run in [.github/workflows/ci.yml](.github/workflows/ci.yml) (includin
 | [SECURITY.md](SECURITY.md) | Vulnerability reporting |
 | [RELEASE.md](RELEASE.md) | Publish checklist (PyPI / tags) |
 | [docs/pypi-trusted-publishing.md](docs/pypi-trusted-publishing.md) | PyPI Trusted Publisher names (four distributions) |
-| [exo_adapters_pypi_handoff.md](exo_adapters_pypi_handoff.md) | **eXo-brain** consumer wiring (PyPI pins) |
 | [AGENTS.md](AGENTS.md) | Agent/orchestrator entry (optional; IDE rules are gitignored) |
 
 ## Documentation

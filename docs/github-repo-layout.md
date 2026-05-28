@@ -26,7 +26,6 @@ Lean public repo: **packages + tests + docs + four certification scripts + CI**.
 | `LICENSE`, `NOTICE`, `CHANGELOG.md` | Legal and release notes |
 | `CONTRIBUTING.md`, `SECURITY.md` | Community and security |
 | `requirements-ci.txt`, `requirements-dev.txt`, `requirements-release.txt`, `pytest.ini` | Install, test, and release tooling |
-| `exo_adapters_pypi_handoff.md` | eXo-brain consumer handoff (PyPI wiring) |
 | `RELEASE.md` | Maintainer release checklist |
 
 ### `scripts/` (entire tree)

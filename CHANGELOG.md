@@ -17,10 +17,8 @@ The four distributions (`exo-brain-core-contracts`, `exo-brain-adapter-sdk`,
   provided.
 - CI gates: portability import guard, package layout validation, forbidden-import
   scan, conformance tests, `external_install_smoke.py`, advisory coverage.
-- `scripts/pypi_install_smoke.py` for post-publish verification (optional CI via
-  `EXO_PYPI_SMOKE=1`).
-- Root docs: `RELEASE.md`, `CONTRIBUTING.md`, `SECURITY.md`, consumer handoff
-  `exo_adapters_pypi_handoff.md`.
+- `scripts/pypi_install_smoke.py` for manual post-publish verification.
+- Root docs: `RELEASE.md`, `CONTRIBUTING.md`, `SECURITY.md`.
 
 ### Notes
 

@@ -36,4 +36,4 @@ Start here after reading the root [README.md](../README.md).
 
 This repository does **not** duplicate operator docs (deploying `eXo-brain`, installing wheels into the control plane environment, registering providers via API, etc.). Those docs live in **[SavinRazvan/eXo-brain](https://github.com/SavinRazvan/eXo-brain)** and should be referenced by **pinned release tags** to avoid drift (example tag in this repo: `v0.1.0`).
 
-Consumer handoff (eXo-brain maintainers): [`exo_adapters_pypi_handoff.md`](../exo_adapters_pypi_handoff.md) at repo root.
+eXo-brain maintainers: pin adapter wheels per [RELEASE.md](../RELEASE.md) and [docs/versioning-and-releases.md](versioning-and-releases.md); operator wiring lives in **eXo-brain** docs.
