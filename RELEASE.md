@@ -58,6 +58,30 @@ python scripts/external_install_smoke.py
 3. Tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
 4. Workflow [`.github/workflows/release.yml`](.github/workflows/release.yml) builds and uploads wheels (job uses GitHub environment `pypi`).
 
+## Troubleshooting Trusted Publishing
+
+### `400 Non-user identities cannot create new projects`
+
+OIDC auth worked, but the **pending publisher project name** on PyPI does not match the **distribution name** in the wheel (`pyproject.toml` `name =` field).
+
+| Wrong on PyPI | Correct pending / project name |
+|---------------|--------------------------------|
+| `eXo_adapters` | `exo-brain-core-contracts` (one publisher per row below) |
+
+Register **four** pending publishers (or add publishers on existing projects), each with:
+
+- Owner: `SavinRazvan`
+- Repository: `eXo_adapters` (not a URL)
+- Workflow: `release.yml`
+- Environment: `pypi`
+- **PyPI project name** = exact distribution name:
+
+  `exo-brain-core-contracts`, `exo-brain-adapter-sdk`, `exo-adapter-echo`, `exo-adapter-openai`
+
+Remove any pending publisher whose project name is `eXo_adapters` or another repo name.
+
+After fixing PyPI: **Actions → failed release run → Re-run failed jobs** (or delete tag `v0.1.1` and push again).
+
 ## Post-publish verification
 
 ```bash
