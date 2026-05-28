@@ -68,7 +68,7 @@ class EchoRuntimeAdapter(RuntimeAdapter):
                 correlation_id=run_id,
                 payload={"status": "completed", "provider_id": self._provider_id},
             )
-        except Exception as exc:  # pragma: no cover - adapter boundary
+        except Exception as exc:
             yield RuntimeEvent(
                 event_type=RuntimeEventType.ERROR,
                 session_id=session_id,
@@ -97,7 +97,7 @@ class EchoRuntimeAdapter(RuntimeAdapter):
                     "provider_id": self._provider_id,
                 },
             )
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:
             yield RuntimeEvent(
                 event_type=RuntimeEventType.ERROR,
                 session_id=session_id,

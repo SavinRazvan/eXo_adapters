@@ -255,27 +255,8 @@ class OpenAIAgentsRuntimeAdapter(RuntimeAdapter):
                             correlation_id=correlation_id,
                         )
                     elif isinstance(item, ToolCallItem):
-                        # Delegating tools: FunctionTool bodies call the executor; do not
-                        # re-emit TOOL_INTENT to the orchestrator (avoids double execution).
-                        if not delegating:
-                            raw = item.raw_item
-                            yield _tool_intent_event(
-                                session_id=session_id,
-                                run_id=run_id,
-                                call=ToolCallContext(
-                                    schema_version="1.0",
-                                    call_id=str(getattr(raw, "call_id", run_id)),
-                                    session_id=session_id,
-                                    run_id=run_id,
-                                    job_id="job_api",
-                                    task_id="task_api",
-                                    agent_id=agent_id,
-                                    provider_id=self._provider_id,
-                                    tool_name=str(getattr(raw, "name", "")),
-                                    arguments={},
-                                ),
-                                correlation_id=correlation_id,
-                            )
+                        # Delegating tools: FunctionTool bodies call the executor; skip TOOL_INTENT.
+                        pass
                     elif isinstance(item, ToolCallOutputItem):
                         # Tool results are emitted through deterministic tool wiring.
                         pass
@@ -301,7 +282,7 @@ class OpenAIAgentsRuntimeAdapter(RuntimeAdapter):
                 output={"status": "completed", "provider_id": self._provider_id},
                 correlation_id=correlation_id,
             )
-        except Exception as exc:  # pragma: no cover - defensive adapter boundary
+        except Exception as exc:
             yield _error_event(
                 session_id=session_id,
                 run_id=run_id,
@@ -386,7 +367,7 @@ class OpenAIAgentsRuntimeAdapter(RuntimeAdapter):
                 },
                 correlation_id=correlation_id,
             )
-        except Exception as exc:  # pragma: no cover - defensive adapter boundary
+        except Exception as exc:
             yield _error_event(
                 session_id=session_id,
                 run_id=run_id,

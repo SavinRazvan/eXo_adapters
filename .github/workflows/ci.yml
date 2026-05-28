@@ -39,14 +39,15 @@ jobs:
       - name: Pytest
         run: python -m pytest -q
 
-      - name: Pytest coverage (advisory)
+      - name: Pytest coverage (packages, 100% gate)
         run: |
           python -m pytest -q \
             --cov=packages/exo-brain-core-contracts/src \
             --cov=packages/exo-brain-adapter-sdk/src \
             --cov=packages/exo-adapter-echo/src \
             --cov=packages/exo-adapter-openai/src \
-            --cov-report=term-missing || true
+            --cov-report=term-missing \
+            --cov-fail-under=100
 
       - name: External install smoke
         run: python scripts/external_install_smoke.py

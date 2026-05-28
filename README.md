@@ -69,13 +69,25 @@ Pin versions per [`docs/versioning-and-releases.md`](docs/versioning-and-release
 Install [`requirements-ci.txt`](requirements-ci.txt) before running tests (pulls in `openai-agents` and other adapter dependencies).
 
 - **Unit / conformance tests:** `pytest -q` (from this root)
+- **Package source coverage (100% gate):** same paths as CI — `packages/*/src` only:
+  ```bash
+  python -m pytest -q \
+    --cov=packages/exo-brain-core-contracts/src \
+    --cov=packages/exo-brain-adapter-sdk/src \
+    --cov=packages/exo-adapter-echo/src \
+    --cov=packages/exo-adapter-openai/src \
+    --cov-report=term-missing \
+    --cov-fail-under=100
+  ```
 - **Standalone install certification:** `python scripts/external_install_smoke.py` (isolated venv, editable installs all four packages)
 - **Portability guard:** `python scripts/check_no_control_plane_imports.py` (adapter sources must not import `src.*`)
 - **Package layout + adapter wall:** `python scripts/architecture/validate_adapter_packages.py` and `python scripts/architecture/scan_forbidden_imports.py`
 
-Same gates run in [.github/workflows/ci.yml](.github/workflows/ci.yml) (plus advisory coverage and `pip-audit`).
+Same gates run in [.github/workflows/ci.yml](.github/workflows/ci.yml) (including the coverage gate above and advisory `pip-audit`).
 
-**Maintainer release:** [RELEASE.md](RELEASE.md) — `requirements-release.txt`, `scripts/build_all_packages.sh`, tag → [`.github/workflows/release.yml`](.github/workflows/release.yml).
+**Maintainer release:** [RELEASE.md](RELEASE.md) — `requirements-release.txt`, `scripts/build_all_packages.sh`, `./scripts/verify_pypi_project_names.sh` (wheel names vs PyPI Trusted Publishers), [docs/pypi-trusted-publishing.md](docs/pypi-trusted-publishing.md), tag → [`.github/workflows/release.yml`](.github/workflows/release.yml) (GitHub environment `pypi`).
+
+**Local OpenAI adapter (optional):** set `OPENAI_API_KEY` in a gitignored `.env` and `source .env` before manual runs; CI and unit tests mock the SDK and do not need a real key. See [docs/SECURITY_AND_ISOLATION.md](docs/SECURITY_AND_ISOLATION.md).
 
 ## Repository files
 
@@ -86,6 +98,7 @@ Same gates run in [.github/workflows/ci.yml](.github/workflows/ci.yml) (plus adv
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contributor gates and scope |
 | [SECURITY.md](SECURITY.md) | Vulnerability reporting |
 | [RELEASE.md](RELEASE.md) | Publish checklist (PyPI / tags) |
+| [docs/pypi-trusted-publishing.md](docs/pypi-trusted-publishing.md) | PyPI Trusted Publisher names (four distributions) |
 | [exo_adapters_pypi_handoff.md](exo_adapters_pypi_handoff.md) | **eXo-brain** consumer wiring (PyPI pins) |
 | [AGENTS.md](AGENTS.md) | Agent/orchestrator entry (optional; IDE rules are gitignored) |
 
