@@ -50,13 +50,13 @@ python scripts/external_install_smoke.py
 
 ## Publish (GitHub Actions)
 
-1. Configure **PyPI Trusted Publishing** for each project:
-   - `exo-brain-core-contracts`
-   - `exo-brain-adapter-sdk`
-   - `exo-adapter-echo`
-   - `exo-adapter-openai`
-2. Tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
-3. Workflow [`.github/workflows/release.yml`](.github/workflows/release.yml) builds and uploads wheels.
+1. On GitHub: **Settings → Environments → New** → name `pypi` (restrict deploy access if desired).
+2. On PyPI: add a **pending trusted publisher** (×4) per distribution:
+   - `exo-brain-core-contracts`, `exo-brain-adapter-sdk`, `exo-adapter-echo`, `exo-adapter-openai`
+   - Owner `SavinRazvan`, repository `eXo_adapters`, workflow **`release.yml`**, environment **`pypi`**
+   - Repository name is **not** a URL; PyPI project name is the **distribution** name, not `eXo_adapters`.
+3. Tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
+4. Workflow [`.github/workflows/release.yml`](.github/workflows/release.yml) builds and uploads wheels (job uses GitHub environment `pypi`).
 
 ## Post-publish verification
 
