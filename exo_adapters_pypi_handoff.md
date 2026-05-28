@@ -5,123 +5,147 @@ Role: Consumer handoff for wiring `eXo-brain` to install runtime adapters from P
 Used By:
  - Maintainer updating `SavinRazvan/eXo-brain` to consume published adapter packages
 Depends On:
- - eXo-brain: `requirements.txt` (or equivalent dependency surface)
+ - eXo-brain: `requirements.txt`, `requirements-adapters.txt`
  - eXo-brain: `src/runtime/adapter_factory.py`
+ - eXo-brain: `scripts/dev/install_adapter_dependencies.sh`
  - eXo-brain: `scripts/architecture/scan_forbidden_imports.py`
- - eXo-brain: CI workflow triggers (typically `.github/workflows/architecture-fitness.yml`)
+ - eXo-brain: CI workflow triggers (`.github/workflows/architecture-fitness.yml`)
 Notes:
- - This file intentionally omits the publishing workflow; publishing belongs in the adapters repo (`eXo_adapters`), not the control plane.
+ - Publishing workflow lives in this repo (`RELEASE.md`, `.github/workflows/release.yml`).
+ - Status reviewed: 2026-05-28 against local `eXo_adapters` + `eXo-brain` trees.
 -->
 
 # Handoff: wire **eXo-brain** to consume **eXo_adapters** from PyPI
 
-## Mission (what you are responsible for)
+## Status snapshot (2026-05-28)
 
-Update **[eXo-brain](https://github.com/SavinRazvan/eXo-brain)** (`SavinRazvan/eXo-brain`) so that:
+| Track | Overall |
+|-------|---------|
+| **eXo_adapters** (publish) | **Ready to tag** — packages, CI, smoke green locally; **PyPI upload not done yet** |
+| **eXo-brain** (consume) | **Wired for PyPI pins** — requirements + CI + factory E2E; **full PyPI-only CI blocked until wheels exist on PyPI** |
 
-- It installs adapter ecosystem packages from **PyPI** (no local `packages/eXo_adapters/...` workspace assumptions).
-- Provider SDK imports remain **behind adapter boundaries** (adapter wall).
-- CI gates still validate “no provider SDK imports” in the control plane.
+**Blocker for “100% done”:** publish all four distributions to PyPI (`v0.1.1`), then run `EXO_ADAPTER_VERSION=0.1.1 python scripts/pypi_install_smoke.py` and confirm eXo-brain CI installs without `packages/repo_for_pipy` fallback.
 
-## Adapter ecosystem distributions (PyPI)
+---
 
-The adapter ecosystem publishes these **four** packages (distribution names must remain exactly these):
+## Mission
+
+**eXo-brain** ([SavinRazvan/eXo-brain](https://github.com/SavinRazvan/eXo-brain)) should:
+
+- Install adapter ecosystem packages from **PyPI** (no `-e ./packages/eXo_adapters/...` in normal `requirements.txt`).
+- Keep provider SDKs **behind adapter boundaries** (adapter wall).
+- Keep architecture CI on dependency changes.
+
+**eXo_adapters** ([SavinRazvan/eXo_adapters](https://github.com/SavinRazvan/eXo_adapters)) publishes:
 
 - `exo-brain-core-contracts`
 - `exo-brain-adapter-sdk`
 - `exo-adapter-echo`
 - `exo-adapter-openai`
 
-## Acceptance criteria (definition of done)
+(lockstep **0.1.1** today)
+
+---
+
+## Acceptance criteria
 
 ### A. Dependency surface
 
-- `eXo-brain` installs from PyPI: no `-e ./packages/eXo_adapters/...` lines required for normal usage.
-- Adapter packages are optional (recommended) so the control plane can install without provider dependencies by default.
+| Criterion | Status |
+|-----------|--------|
+| eXo-brain `requirements.txt` uses PyPI pin for contracts (no `-e ./packages/eXo_adapters/...`) | **Done** — `exo-brain-core-contracts==0.1.1` |
+| Adapters optional (control plane can install without provider wheels) | **Done** — `requirements-adapters.txt` + `install_adapter_dependencies.sh` |
+| Wheels actually on PyPI | **Not done** — `pip index` still reports no distribution (publish pending) |
 
 ### B. Adapter loading
 
-- `src/runtime/adapter_factory.py` successfully resolves adapter class refs that point to published modules:
-  - `exo_adapter_openai.runtime.OpenAIAgentsRuntimeAdapter`
-  - `exo_adapter_echo.runtime.EchoRuntimeAdapter`
+| Criterion | Status |
+|-----------|--------|
+| `adapter_factory` resolves `exo_adapter_openai.runtime.OpenAIAgentsRuntimeAdapter` | **Done** (code + `tests/modules/runtime/test_packaged_adapter_e2e.py`) |
+| `adapter_factory` resolves `exo_adapter_echo.runtime.EchoRuntimeAdapter` | **Done** (same) |
 
 ### C. CI coverage for dependency-only PRs
 
-- Changes to the dependency surface (typically `requirements.txt`) trigger the CI suite that includes architecture checks (at minimum `scan_forbidden_imports.py`, ideally pytest as well).
+| Criterion | Status |
+|-----------|--------|
+| `requirements.txt` / `requirements-adapters.txt` in CI `paths:` | **Done** (`architecture-fitness.yml`) |
+| Architecture scans + pytest on those PRs | **Done** |
+| CI uses PyPI-only installs (no local mirror) | **Partial** — CI runs `install_adapter_dependencies.sh` (PyPI first, **`packages/repo_for_pipy` fallback** until PyPI exists) |
 
-## Guardrails (do not violate)
+---
 
-- **No provider SDK imports outside adapters**: the control plane must not import `openai`, etc. This is enforced by `scripts/architecture/scan_forbidden_imports.py` in eXo-brain.
-## Implementation steps (in `eXo-brain`)
+## Checklist — **eXo_adapters** (this repository)
 
-### 1) Replace local adapter-workspace requirements with PyPI deps
+Publisher / certification work:
 
-In eXo-brain, update `requirements.txt`:
+- [x] Four packages under `packages/` with lockstep `0.1.1` in `pyproject.toml`
+- [x] Stable `adapter_class_ref` import paths documented
+- [x] No `src.*` in adapter packages; CI import guard + `scan_forbidden_imports.py`
+- [x] Conformance tests + `external_install_smoke.py` (local gates green: 16 pytest, smoke PASS)
+- [x] `.github/workflows/ci.yml`
+- [x] `.github/workflows/release.yml` (tag `v*` → build/upload)
+- [x] `RELEASE.md`, `requirements-release.txt`, `scripts/build_all_packages.sh`
+- [x] Root legal/docs: `LICENSE`, `NOTICE`, `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`
+- [ ] **Public GitHub repo** pushed (`SavinRazvan/eXo_adapters`)
+- [ ] **PyPI Trusted Publishing** configured per distribution (four projects)
+- [ ] **Publish** `v0.1.1` to PyPI (tag push or `twine upload`)
+- [ ] **Post-publish:** `python scripts/pypi_install_smoke.py` (or CI `EXO_PYPI_SMOKE=1`)
 
-- Replace local editable lines (example):
-  - `-e ./packages/eXo_adapters/packages/exo-brain-core-contracts`
-- With PyPI pins/ranges:
-  - `exo-brain-core-contracts==X.Y.Z` (or `>=X.Y.Z`)
+---
 
-Then decide how to surface adapters:
+## Checklist — **eXo-brain** (control plane)
 
-- **Recommended**: make adapters optional extras (so the control plane installs without provider deps):
-  - base requirements: control plane + contracts
-  - optional: `exo-adapter-openai`, `exo-adapter-echo`
+Consumer wiring (implement in eXo-brain, not here):
 
-If eXo-brain today expects OpenAI adapter by default, you can either:
-- keep a “default adapter” extra, or
-- keep in-tree fallback adapter until PyPI path is proven stable, then remove the fallback.
+- [x] Replace `-e ./packages/eXo_adapters/...` in `requirements.txt` with PyPI pin (`exo-brain-core-contracts==0.1.1`)
+- [x] Optional adapters in `requirements-adapters.txt` (SDK + echo + openai)
+- [x] `scripts/dev/install_adapter_dependencies.sh` (PyPI first, local `packages/repo_for_pipy` fallback)
+- [x] CI `paths:` include `requirements.txt`, `requirements-adapters.txt`, `requirements-adapters-local.txt`
+- [x] CI installs adapters before `tests/packages` / runtime jobs (`install_adapter_dependencies.sh`)
+- [x] Factory E2E for installed wheels: `tests/modules/runtime/test_packaged_adapter_e2e.py`
+- [~] **`tests/packages/*`:** **Choice A + legacy fallback** — runs in CI when packages are installed; still supports local `repo_for_pipy` / sibling clone via `tests/adapter_package_paths.py`. Primary conformance suite lives in **eXo_adapters** (`tests/test_*_adapter_*.py`).
+- [ ] **PyPI-only CI** (no `repo_for_pipy` fallback) — after PyPI publish, verify CI without mirror
+- [ ] Pin / matrix updated in eXo-brain `docs/strategy/adapter-compatibility-matrix.md` for **0.1.1**
+- [ ] Remove or shrink `packages/repo_for_pipy/` mirror once PyPI path is proven (optional cleanup)
 
-### 2) Ensure CI runs for dependency-only changes
+---
 
-Today, `architecture-fitness.yml` runs on `src/**`, `tests/**`, `packages/**`, etc.
+## Implementation reference (eXo-brain)
 
-To avoid dependency PRs slipping through with only CodeQL checks, update eXo-brain CI so that:
-- `requirements.txt` changes trigger the full suite (or at least pytest + architecture scans).
+### 1) Requirements (done in tree)
 
-Concretely:
-- add `requirements.txt` to `.github/workflows/architecture-fitness.yml` `paths:` trigger.
+- `requirements.txt` — `exo-brain-core-contracts==0.1.1` (no provider SDKs in base file)
+- `requirements-adapters.txt` — optional adapter line
+- `requirements-adapters-local.txt` — editable fallback for pre-publish dev only
 
-### 3) Decide what to do with `tests/packages/*` conformance tests
+### 2) CI triggers (done)
 
-Those tests currently skip unless a local adapter workspace exists.
+`architecture-fitness.yml` includes `requirements.txt`, `requirements-adapters.txt`, and related paths.
 
-After moving adapters out, eXo-brain has three sensible choices:
+### 3) `tests/packages/*` (hybrid)
 
-- **Choice A (recommended):** convert `tests/packages/*` into “installed package” tests
-  - install `exo-adapter-echo` and `exo-adapter-openai` in CI (via extras)
-  - run conformance tests against installed packages
-- **Choice B:** keep them as optional local-only tests (documented)
-  - fine if you don’t want provider deps in CI
-- **Choice C:** move them entirely to eXo_adapters and delete from eXo-brain
-  - then keep only a minimal integration smoke in eXo-brain
+- **eXo_adapters:** full conformance + smoke (canonical for adapter authors).
+- **eXo-brain:** `package_workspace_tests` job + `test_packaged_adapter_e2e` for control-plane integration.
 
-Pick one and update docs accordingly.
+### How eXo-brain loads adapters
 
-## How eXo-brain loads adapters (what must remain true)
+- Dotted refs: `exo_adapter_openai.runtime.OpenAIAgentsRuntimeAdapter`, `exo_adapter_echo.runtime.EchoRuntimeAdapter`
+- Loader: `src/runtime/adapter_factory.py`
+- Adapter wall: `scripts/architecture/scan_forbidden_imports.py` (eXo-brain)
 
-The control plane loads adapters by dotted class reference. The published adapters must expose stable import paths, e.g.:
+---
 
-- `exo_adapter_openai.runtime.OpenAIAgentsRuntimeAdapter`
-- `exo_adapter_echo.runtime.EchoRuntimeAdapter`
+## Notes on `packages/eXo_adapters/**` and `packages/repo_for_pipy/**` in eXo-brain
 
-The load path is resolved in:
-- `src/runtime/adapter_factory.py`
+- `packages/eXo_adapters/` — sibling clone for dev; gitignored.
+- `packages/repo_for_pipy/` — **temporary mirror** of this repo for CI/dev until PyPI wheels exist; do not treat as the publishing source of truth.
+- **Canonical publish source:** [SavinRazvan/eXo_adapters](https://github.com/SavinRazvan/eXo_adapters).
 
-The adapter wall rule is enforced by:
-- `scripts/architecture/scan_forbidden_imports.py`
+---
 
-## Checklist (copy/paste for the implementing agent in `eXo-brain`)
+## After PyPI publish (both repos)
 
-Complete these in **[SavinRazvan/eXo-brain](https://github.com/SavinRazvan/eXo-brain)** — not in this adapters repo:
-
-- [ ] Replace any local adapter-workspace `-e ./packages/eXo_adapters/...` requirements with PyPI dependencies.
-- [ ] Decide whether adapters are default deps or optional extras (e.g. separate `requirements-adapters.txt`).
-- [ ] Update CI triggers so dependency-surface changes run architecture scans and pytest.
-- [ ] Decide fate of `tests/packages/*` (installed-package tests vs optional local-only vs move to adapters repo).
-
-## Notes on why `packages/eXo_adapters/**` is ignored in eXo-brain
-
-In eXo-brain, `packages/eXo_adapters/` may exist as a local sibling clone for development, but it must not be accidentally committed/published as part of the control-plane repo. Only the small `exo-brain-core-contracts` subset was temporarily vendored for CI. Once PyPI publishing is in place, eXo-brain should stop vendoring this subtree entirely.
-
+1. Tag **`v0.1.1`** in eXo_adapters → release workflow uploads four wheels.
+2. Run `EXO_ADAPTER_VERSION=0.1.1 python scripts/pypi_install_smoke.py`.
+3. Re-run eXo-brain CI; confirm `install_adapter_dependencies.sh` logs **“Installed … from PyPI”** with no fallback.
+4. Check off remaining boxes above.
