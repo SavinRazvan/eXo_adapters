@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "exo-adapter-openai"
 version = "0.1.1"
 description = "OpenAI runtime adapter package for eXo-brain."
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "exo-brain-core-contracts>=0.1.1,<0.2",

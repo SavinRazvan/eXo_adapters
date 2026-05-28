@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "exo-brain-core-contracts"
 version = "0.1.1"
 description = "Provider-neutral runtime and envelope contracts for eXo-brain."
+readme = "README.md"
 requires-python = ">=3.11"
 
 [tool.setuptools]

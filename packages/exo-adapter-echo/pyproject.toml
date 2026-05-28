@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "exo-adapter-echo"
 version = "0.1.1"
 description = "Portable echo RuntimeAdapter for eXo-brain conformance and multi-adapter tests."
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["exo-brain-core-contracts>=0.1.1,<0.2"]
 
