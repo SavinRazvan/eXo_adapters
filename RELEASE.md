@@ -82,6 +82,10 @@ Remove any pending publisher whose project name is `eXo_adapters` or another rep
 
 After fixing PyPI: **Actions → failed release run → Re-run failed jobs** (or delete tag `v0.1.1` and push again).
 
+### GitHub **Environments → pypi** shows “Failed to deploy”
+
+That page lists each **release** matrix job that used `environment: pypi`. A failed deploy there means the **Publish to PyPI** step failed (same 400 as above), not a broken GitHub environment. When all four uploads succeed, you will see four successful deployments to `pypi`.
+
 ## Post-publish verification
 
 ```bash
