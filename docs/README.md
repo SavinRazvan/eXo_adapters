@@ -30,6 +30,7 @@ Start here after reading the root [README.md](../README.md).
 5. **[versioning-and-releases.md](versioning-and-releases.md)** — Lockstep `0.1.1` today; semver and release order.
 6. **[SECURITY_AND_ISOLATION.md](SECURITY_AND_ISOLATION.md)** — Security posture for adapter packages (secrets, logging, isolation).
 7. **[github-repo-layout.md](github-repo-layout.md)** — Commit vs ignore; folder map for GitHub/PyPI.
+8. **[pypi-trusted-publishing.md](pypi-trusted-publishing.md)** — PyPI Trusted Publisher form values (×4 packages).
 
 ## Control-plane and operator documentation
 

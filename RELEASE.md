@@ -50,6 +50,8 @@ python scripts/external_install_smoke.py
 
 ## Publish (GitHub Actions)
 
+Step-by-step PyPI form values: **[docs/pypi-trusted-publishing.md](docs/pypi-trusted-publishing.md)**.
+
 1. On GitHub: **Settings → Environments → New** → name `pypi` (restrict deploy access if desired).
 2. On PyPI: add a **pending trusted publisher** (×4) per distribution:
    - `exo-brain-core-contracts`, `exo-brain-adapter-sdk`, `exo-adapter-echo`, `exo-adapter-openai`
