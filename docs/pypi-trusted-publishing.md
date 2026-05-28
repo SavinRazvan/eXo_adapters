@@ -33,12 +33,24 @@ Repeat for **each row** (do not use repo name `eXo_adapters` as the PyPI project
 
 **Remove** any pending publisher whose project name is `eXo_adapters`, `hydra-logger`, or anything other than the four names above.
 
+## Verify names match your wheels
+
+After `./scripts/build_all_packages.sh`:
+
+```bash
+./scripts/verify_pypi_project_names.sh
+```
+
+Each line must have a **matching** pending publisher on PyPI with the same **PyPI project name**.
+
 ## Publish
 
 ```bash
 git tag v0.1.1
 git push origin v0.1.1
 ```
+
+Or re-run failed jobs in **Actions → release** after fixing PyPI (no new tag needed).
 
 Watch **Actions → release** (four green jobs). Then:
 
