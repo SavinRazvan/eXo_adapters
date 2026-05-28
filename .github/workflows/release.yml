@@ -12,9 +12,45 @@ permissions:
   contents: read
 
 jobs:
-  publish:
+  gates:
+    name: Test and validate before publish
     runs-on: ubuntu-latest
-    environment: pypi
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-ci.txt
+
+      - name: Portability import guard
+        run: python scripts/check_no_control_plane_imports.py
+
+      - name: Validate adapter packages
+        run: python scripts/architecture/validate_adapter_packages.py
+
+      - name: Scan forbidden imports
+        run: python scripts/architecture/scan_forbidden_imports.py
+
+      - name: Pytest with package coverage (100% gate)
+        run: |
+          python -m pytest -q \
+            --cov=packages/exo-brain-core-contracts/src \
+            --cov=packages/exo-brain-adapter-sdk/src \
+            --cov=packages/exo-adapter-echo/src \
+            --cov=packages/exo-adapter-openai/src \
+            --cov-report=term-missing \
+            --cov-fail-under=100
+
+      - name: External install smoke
+        run: python scripts/external_install_smoke.py
+
+  publish:
+    name: Publish ${{ matrix.package }}
+    needs: gates
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -34,6 +70,14 @@ jobs:
         run: |
           pip install build
           python -m build "packages/${{ matrix.package }}"
+
+      - name: Verify distribution name matches PyPI publisher
+        run: ./scripts/verify_pypi_project_names.sh "${{ matrix.package }}"
+
+      - name: Twine check
+        run: |
+          pip install twine
+          twine check "packages/${{ matrix.package }}/dist/"*
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
