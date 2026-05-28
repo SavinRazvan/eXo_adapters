@@ -3,7 +3,7 @@ File: pypi_install_smoke.py
 Path: scripts/pypi_install_smoke.py
 Role: Verify adapter ecosystem installs from PyPI (or TestPyPI) in a clean venv.
 Used By:
- - CI when EXO_PYPI_SMOKE=1 (post-publish) or manual release verification
+ - Manual post-publish release verification
 Depends On:
  - PyPI distributions at EXO_ADAPTER_VERSION (default 0.1.1)
 Notes:

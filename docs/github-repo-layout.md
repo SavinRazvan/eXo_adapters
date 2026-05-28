@@ -35,7 +35,7 @@ Lean public repo: **packages + tests + docs + four certification scripts + CI**.
 scripts/
   check_no_control_plane_imports.py
   external_install_smoke.py
-  pypi_install_smoke.py          # optional; post-publish / EXO_PYPI_SMOKE=1 in CI
+  pypi_install_smoke.py          # optional; manual post-publish verification
   build_all_packages.sh
   architecture/
     validate_adapter_packages.py

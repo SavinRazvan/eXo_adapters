@@ -85,7 +85,7 @@ Install [`requirements-ci.txt`](requirements-ci.txt) before running tests (pulls
 
 Same gates run in [.github/workflows/ci.yml](.github/workflows/ci.yml) (including the coverage gate above and advisory `pip-audit`).
 
-**Maintainer release:** [RELEASE.md](RELEASE.md) — `requirements-release.txt`, `scripts/build_all_packages.sh`, `./scripts/verify_pypi_project_names.sh` (wheel names vs PyPI Trusted Publishers), [docs/pypi-trusted-publishing.md](docs/pypi-trusted-publishing.md), tag → [`.github/workflows/release.yml`](.github/workflows/release.yml) (GitHub environment `pypi`).
+**Maintainer release:** [RELEASE.md](RELEASE.md) — tag `v*` runs **tests first**, then publish (`requirements-release.txt`, `verify_pypi_project_names.sh`, [docs/pypi-trusted-publishing.md](docs/pypi-trusted-publishing.md)). Post-publish: `EXO_ADAPTER_VERSION=X.Y.Z python scripts/pypi_install_smoke.py`.
 
 **Local OpenAI adapter (optional):** set `OPENAI_API_KEY` in a gitignored `.env` and `source .env` before manual runs; CI and unit tests mock the SDK and do not need a real key. See [docs/SECURITY_AND_ISOLATION.md](docs/SECURITY_AND_ISOLATION.md).
 

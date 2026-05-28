@@ -87,9 +87,9 @@ Publisher / certification work:
 - [x] `RELEASE.md`, `requirements-release.txt`, `scripts/build_all_packages.sh`
 - [x] Root legal/docs: `LICENSE`, `NOTICE`, `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`
 - [ ] **Public GitHub repo** pushed (`SavinRazvan/eXo_adapters`)
-- [ ] **PyPI Trusted Publishing** configured per distribution (four projects; workflow `release.yml`, environment `pypi`)
+- [ ] **PyPI Trusted Publishing** configured per distribution (four projects; workflow `release.yml`, no GitHub environment)
 - [ ] **Publish** `v0.1.1` to PyPI (tag push or `twine upload`)
-- [ ] **Post-publish:** `python scripts/pypi_install_smoke.py` (or CI `EXO_PYPI_SMOKE=1`)
+- [ ] **Post-publish:** `python scripts/pypi_install_smoke.py`
 
 ---
 
@@ -145,7 +145,7 @@ Consumer wiring (implement in eXo-brain, not here):
 
 ## After PyPI publish (both repos)
 
-1. GitHub **Settings → Environments → `pypi`**; PyPI pending publishers: Owner `SavinRazvan`, repo `eXo_adapters`, workflow `release.yml`, environment `pypi` (×4 distribution names).
+1. PyPI pending publishers: Owner `SavinRazvan`, repo `eXo_adapters`, workflow `release.yml`, environment blank (×4 distribution names). See [docs/pypi-trusted-publishing.md](docs/pypi-trusted-publishing.md).
 2. Tag **`v0.1.1`** in eXo_adapters → release workflow uploads four wheels.
 3. Run `EXO_ADAPTER_VERSION=0.1.1 python scripts/pypi_install_smoke.py`.
 4. Re-run eXo-brain CI; confirm `install_adapter_dependencies.sh` logs **“Installed … from PyPI”** with no fallback.

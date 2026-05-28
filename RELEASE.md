@@ -52,13 +52,12 @@ python scripts/external_install_smoke.py
 
 Step-by-step PyPI form values: **[docs/pypi-trusted-publishing.md](docs/pypi-trusted-publishing.md)**.
 
-1. On GitHub: **Settings → Environments → New** → name `pypi` (restrict deploy access if desired).
-2. On PyPI: add a **pending trusted publisher** (×4) per distribution:
+1. On PyPI: add a **pending trusted publisher** (×4) per distribution:
    - `exo-brain-core-contracts`, `exo-brain-adapter-sdk`, `exo-adapter-echo`, `exo-adapter-openai`
-   - Owner `SavinRazvan`, repository `eXo_adapters`, workflow **`release.yml`**, environment **`pypi`**
+   - Owner `SavinRazvan`, repository `eXo_adapters`, workflow **`release.yml`**, **Environment** left blank
    - Repository name is **not** a URL; PyPI project name is the **distribution** name, not `eXo_adapters`.
-3. Tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
-4. Workflow [`.github/workflows/release.yml`](.github/workflows/release.yml) builds and uploads wheels (job uses GitHub environment `pypi`).
+2. Tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
+3. Workflow [`.github/workflows/release.yml`](.github/workflows/release.yml) runs the same **gates** as CI, then builds, `twine check`, and uploads wheels.
 
 ## Troubleshooting Trusted Publishing
 
@@ -75,7 +74,7 @@ Register **four** pending publishers (or add publishers on existing projects), e
 - Owner: `SavinRazvan`
 - Repository: `eXo_adapters` (not a URL)
 - Workflow: `release.yml`
-- Environment: `pypi`
+- Environment: *(leave blank on PyPI)*
 - **PyPI project name** = exact distribution name:
 
   `exo-brain-core-contracts`, `exo-brain-adapter-sdk`, `exo-adapter-echo`, `exo-adapter-openai`
@@ -84,17 +83,11 @@ Remove any pending publisher whose project name is `eXo_adapters` or another rep
 
 After fixing PyPI: **Actions → failed release run → Re-run failed jobs** (or delete tag `v0.1.1` and push again).
 
-### GitHub **Environments → pypi** shows “Failed to deploy”
-
-That page lists each **release** matrix job that used `environment: pypi`. A failed deploy there means the **Publish to PyPI** step failed (same 400 as above), not a broken GitHub environment. When all four uploads succeed, you will see four successful deployments to `pypi`.
-
 ## Post-publish verification
 
 ```bash
 EXO_ADAPTER_VERSION=X.Y.Z python scripts/pypi_install_smoke.py
 ```
-
-Or enable repository variable `EXO_PYPI_SMOKE=1` for CI on `main`.
 
 ## eXo-brain follow-up (separate PR)
 
