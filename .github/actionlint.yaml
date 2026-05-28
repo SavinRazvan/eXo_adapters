@@ -1,0 +1,5 @@
+# Optional repository variables used by .github/workflows/ci.yml (PyPI install smoke).
+# Set in GitHub: Settings → Secrets and variables → Actions → Variables.
+config-variables:
+  - EXO_PYPI_SMOKE
+  - EXO_PYPI_INDEX_URL

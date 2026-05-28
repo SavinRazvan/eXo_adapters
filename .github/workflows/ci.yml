@@ -10,6 +10,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # Declared so steps use env.EXO_PYPI_INDEX_URL (set below when optional repo var is set).
+    env:
+      EXO_PYPI_INDEX_URL: ""
     steps:
       - uses: actions/checkout@v6
 
@@ -53,10 +56,18 @@ jobs:
           pip install pip-audit
           pip-audit -r requirements-ci.txt || true
 
+      # Enable: repo variable EXO_PYPI_SMOKE=1; optional EXO_PYPI_INDEX_URL (default PyPI).
+      - name: Apply optional PyPI index URL
+        if: ${{ fromJSON(toJSON(vars)).EXO_PYPI_SMOKE == '1' }}
+        run: |
+          index_url='${{ fromJSON(toJSON(vars)).EXO_PYPI_INDEX_URL }}'
+          if [ -n "$index_url" ]; then
+            echo "EXO_PYPI_INDEX_URL=$index_url" >> "$GITHUB_ENV"
+          fi
+
       - name: PyPI install smoke (optional)
-        if: vars.EXO_PYPI_SMOKE == '1'
+        if: ${{ fromJSON(toJSON(vars)).EXO_PYPI_SMOKE == '1' }}
         env:
           EXO_ADAPTER_VERSION: "0.1.1"
-          EXO_PYPI_INDEX_URL: ${{ vars.EXO_PYPI_INDEX_URL }}
           EXO_PYPI_EXTRA_INDEX_URL: https://pypi.org/simple/
         run: python scripts/pypi_install_smoke.py
