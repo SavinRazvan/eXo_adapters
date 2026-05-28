@@ -1,0 +1,58 @@
+# CI for eXo_adapters: install editable packages, run portability + package gates, pytest, smoke.
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-ci.txt
+
+      - name: Portability import guard
+        run: python scripts/check_no_control_plane_imports.py
+
+      - name: Validate adapter packages
+        run: python scripts/architecture/validate_adapter_packages.py
+
+      - name: Scan forbidden imports
+        run: python scripts/architecture/scan_forbidden_imports.py
+
+      - name: Pytest
+        run: python -m pytest -q
+
+      - name: Pytest coverage (advisory)
+        run: |
+          python -m pytest -q \
+            --cov=packages/exo-brain-core-contracts/src \
+            --cov=packages/exo-brain-adapter-sdk/src \
+            --cov=packages/exo-adapter-echo/src \
+            --cov=packages/exo-adapter-openai/src \
+            --cov-report=term-missing || true
+
+      - name: External install smoke
+        run: python scripts/external_install_smoke.py
+
+      - name: Dependency audit (advisory)
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements-ci.txt || true
+
+      - name: PyPI install smoke (optional)
+        if: vars.EXO_PYPI_SMOKE == '1'
+        env:
+          EXO_ADAPTER_VERSION: "0.1.1"
+          EXO_PYPI_INDEX_URL: ${{ vars.EXO_PYPI_INDEX_URL }}
+          EXO_PYPI_EXTRA_INDEX_URL: https://pypi.org/simple/
+        run: python scripts/pypi_install_smoke.py

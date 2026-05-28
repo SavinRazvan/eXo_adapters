@@ -1,0 +1,13 @@
+# Local wheel/sdist build and PyPI upload (twine).
+# Usage:
+#   pip install -r requirements-release.txt
+#   ./scripts/build_all_packages.sh
+#   twine check packages/*/dist/*
+#   twine upload --repository testpypi packages/*/dist/*   # or pypi
+#
+# CI release uses GitHub Trusted Publishing (.github/workflows/release.yml);
+# twine is for manual/TestPyPI verification before the first automated tag.
+-r requirements-dev.txt
+wheel>=0.42.0
+twine>=6.0.0
+keyring>=25.0.0

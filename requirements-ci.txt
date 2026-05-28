@@ -1,0 +1,7 @@
+# CI and full local dev: dev tools plus editable installs in dependency order.
+# Usage: pip install -r requirements-ci.txt
+-r requirements-dev.txt
+-e ./packages/exo-brain-core-contracts
+-e ./packages/exo-brain-adapter-sdk
+-e ./packages/exo-adapter-echo
+-e ./packages/exo-adapter-openai

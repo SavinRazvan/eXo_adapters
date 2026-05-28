@@ -1,0 +1,70 @@
+# Python build and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.hypothesis/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Secrets (never commit)
+.env/
+.env.*
+!.env.template
+
+# Local maintainer state — do not publish (IDE agents, planning, venv)
+.local/
+.cursor/
+.agents/
+.venv
+.venv/
+venv/
+env/
+
+# Runtime / protected local data (never commit)
+.exo_data/
+.exo_env/
+.exo_env_broken_*/
+.hydra_env/
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+
+# Windows NTFS alternate data streams (WSL copies)
+*Zone.Identifier
+*:Zone.Identifier
+*:zone.identifier
+
+# Local agent session notes (not product docs)
+chat-agent.md
+
+# Logs and temp
+*.log
+logs/
+relative-logs/
+relative-cwd/
+tmp/
+temp/

@@ -1,0 +1,40 @@
+# Publish all four lockstep distributions to PyPI on version tags (v*).
+# Configure Trusted Publishing on PyPI for each project before first release.
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - exo-brain-core-contracts
+          - exo-brain-adapter-sdk
+          - exo-adapter-echo
+          - exo-adapter-openai
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build wheel and sdist
+        run: |
+          pip install build
+          python -m build "packages/${{ matrix.package }}"
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: packages/${{ matrix.package }}/dist

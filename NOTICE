@@ -1,0 +1,10 @@
+eXo_adapters (eXo-brain adapter ecosystem)
+Copyright 2024-2026 Savin I. Razvan
+
+This product is licensed under the Apache License, Version 2.0 (the "License");
+see the LICENSE file in the root of this repository.
+
+This repository publishes provider-neutral runtime adapter packages consumed by
+the eXo-brain control plane (https://github.com/SavinRazvan/eXo-brain). It is
+maintained part-time by a single author and is not affiliated with, endorsed by,
+or supported by any vendor or commercial entity.
