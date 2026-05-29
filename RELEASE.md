@@ -54,7 +54,7 @@ Step-by-step PyPI form values: **[docs/pypi-trusted-publishing.md](docs/pypi-tru
 
 1. On PyPI: add a **pending trusted publisher** (×4) per distribution:
    - `exo-brain-core-contracts`, `exo-brain-adapter-sdk`, `exo-adapter-echo`, `exo-adapter-openai`
-   - Owner `SavinRazvan`, repository `eXo_adapters`, workflow **`release.yml`**, **Environment** left blank
+   - Owner `SavinRazvan`, repository `eXo_adapters`, workflow **`release.yml`**, **Environment** `pypi`
    - Repository name is **not** a URL; PyPI project name is the **distribution** name, not `eXo_adapters`.
 2. Tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
 3. Workflow [`.github/workflows/release.yml`](.github/workflows/release.yml) runs the same **gates** as CI, then builds, `twine check`, and uploads wheels.
@@ -74,7 +74,7 @@ Register **four** pending publishers (or add publishers on existing projects), e
 - Owner: `SavinRazvan`
 - Repository: `eXo_adapters` (not a URL)
 - Workflow: `release.yml`
-- Environment: *(leave blank on PyPI)*
+- Environment: `pypi` (must match `.github/workflows/release.yml`)
 - **PyPI project name** = exact distribution name:
 
   `exo-brain-core-contracts`, `exo-brain-adapter-sdk`, `exo-adapter-echo`, `exo-adapter-openai`
@@ -82,6 +82,23 @@ Register **four** pending publishers (or add publishers on existing projects), e
 Remove any pending publisher whose project name is `eXo_adapters` or another repo name.
 
 After fixing PyPI: **Actions → failed release run → Re-run failed jobs** (or delete tag `v0.1.1` and push again).
+
+## GitHub Release (one per lockstep tag)
+
+Create **one** GitHub Release per tag (`vX.Y.Z`), not four. PyPI has four projects; GitHub Releases document the **lockstep line** for eXo-brain operators.
+
+1. **Releases → Draft a new release** → choose tag `vX.Y.Z` (or create from `main` after version bump).
+2. Title: `X.Y.Z` (adapter ecosystem lockstep).
+3. Body must include:
+   - Links to all four PyPI projects at `X.Y.Z`
+   - **eXo-brain pin block** (copy into `requirements-adapters.txt`)
+   - **`adapter_class_ref`** values for provider registration
+   - Minimum eXo-brain tag from [docs/versioning-and-releases.md](docs/versioning-and-releases.md)
+4. Do **not** attach wheels — PyPI is the artifact store; GitHub Release is the operator manifest.
+
+**GitHub Packages** tab stays empty by design — public wheels live on PyPI only.
+
+**Deployments** appear automatically when `release.yml` publishes via Environment `pypi` (audit trail; optional required reviewers on that environment).
 
 ## Post-publish verification
 

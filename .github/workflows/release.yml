@@ -51,6 +51,7 @@ jobs:
     name: Publish ${{ matrix.package }}
     needs: gates
     runs-on: ubuntu-latest
+    environment: pypi
     strategy:
       fail-fast: false
       matrix:

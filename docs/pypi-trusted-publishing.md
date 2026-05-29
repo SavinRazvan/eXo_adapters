@@ -13,7 +13,7 @@ Configure this **before** pushing tag `v0.1.1` (or your release version).
 
 ## GitHub
 
-Workflow file must be **`release.yml`** (see `.github/workflows/release.yml`). No GitHub **Environment** is required.
+Workflow file must be **`release.yml`** (see `.github/workflows/release.yml`). The publish job uses GitHub **Environment** `pypi` (create under repo **Settings → Environments**; optional required reviewers for production).
 
 ## PyPI (four times)
 
@@ -23,12 +23,12 @@ Repeat for **each row** (do not use repo name `eXo_adapters` as the PyPI project
 
 | PyPI project name (required) | Owner | Repository name | Workflow name | Environment |
 |------------------------------|--------|-----------------|---------------|-------------|
-| `exo-brain-core-contracts` | `SavinRazvan` | `eXo_adapters` | `release.yml` | *(blank)* |
-| `exo-brain-adapter-sdk` | `SavinRazvan` | `eXo_adapters` | `release.yml` | *(blank)* |
-| `exo-adapter-echo` | `SavinRazvan` | `eXo_adapters` | `release.yml` | *(blank)* |
-| `exo-adapter-openai` | `SavinRazvan` | `eXo_adapters` | `release.yml` | *(blank)* |
+| `exo-brain-core-contracts` | `SavinRazvan` | `eXo_adapters` | `release.yml` | `pypi` |
+| `exo-brain-adapter-sdk` | `SavinRazvan` | `eXo_adapters` | `release.yml` | `pypi` |
+| `exo-adapter-echo` | `SavinRazvan` | `eXo_adapters` | `release.yml` | `pypi` |
+| `exo-adapter-openai` | `SavinRazvan` | `eXo_adapters` | `release.yml` | `pypi` |
 
-**Remove** any pending publisher whose project name is `eXo_adapters`, `hydra-logger`, or anything other than the four names above. If you previously set Environment to `pypi`, edit each publisher to leave Environment blank (or re-add publishers to match this table).
+**Remove** any pending publisher whose project name is `eXo_adapters`, `hydra-logger`, or anything other than the four names above. **Environment on PyPI must be `pypi`** — it must match `environment: pypi` in `release.yml`.
 
 ## Verify names match your wheels
 
